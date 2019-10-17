@@ -12,7 +12,7 @@ class Encoder(tf.keras.Model):
     def __init__(self,vocab_size,
                  vec_dim,
                  matrix,
-                 gru_size = 4):
+                 gru_size):
         super(Encoder,self).__init__()
         # embedding_weights = None
         weights = [matrix]
@@ -80,9 +80,10 @@ class Encoder(tf.keras.Model):
         self.gru_size = gru_size
     def call(self,sequence,states):
         embed = self.embedding(sequence)
-        output,state_h,context_v = self.gru(embed,initial_state=states)
+        # output,state_h,context_v = self.gru(embed,initial_state=states)
+        output, state_h = self.gru(embed, initial_state=states)
         # states:hidden
-        return output,state_h,context_v
+        return output,state_h
     def init_states(self,batch_size:int):
         return tf.zeros([batch_size,self.gru_size])
 
@@ -97,21 +98,25 @@ class BahdanauAttention(tf.keras.Model):
         self.V = tf.keras.layers.Dense(1)
 
     def call(self, query, values):
-        # query: gru_out
-        # values: encoder_output
-        # hidden_shape == (batch_size, hidden_size)
-        # hidden_with_time_axis_shape == (batch_size, 1, hidden size)
+        # query: hidden
+        # values：output
+        # hidden_shape == (batch_size, gru_size) query   units == hidden_size
+        # value == (batch_size, max_length, gru_size)    max_length == sequence_length
+        # hidden_with_time_axis_shape == (batch_size, 1, gru_size)
         # we are doing this to perform addition to calculate the score
         hidden_with_time_axis = tf.expand_dims(query, 1)
+
         # score_shape == (batch_size, max_length, 1)
         # we get 1 at the last axis because we are applying score to self.V
-        # the shape of the tensor before applying self.V is (batch_size, max_length, units) # units是gru_size,也就是hidden_size
+        # the shape of the tensor before applying self.V is (batch_size, max_length, gru_size) # units是gru_size,也就是hidden_size
         score = self.V(tf.nn.tanh(self.W1(values) + self.W2(hidden_with_time_axis)))
+
         # attention_weights shape == (batch_size, max_length, 1)
-        alignment  = tf.nn.softmax(score, axis=1)
-        # context_vector shape after sum == (batch_size, hidden_size)
-        context_vector = alignment  * values
+        alignment = tf.nn.softmax(score, axis=1)
+
+        context_vector = alignment * values
         context_vector = tf.reduce_sum(context_vector, axis=1)
+        # context_vector shape after sum == (batch_size, hidden_size)
 
         return context_vector, alignment
 
@@ -119,7 +124,7 @@ class Decoder(tf.keras.Model):
     def __init__(self,vocab_size,
                  vec_dim,
                  matrix,
-                 gru_size = 4):
+                 gru_size):
         super(Decoder,self).__init__()
         self.gru_size = gru_size
         weights = [matrix]
