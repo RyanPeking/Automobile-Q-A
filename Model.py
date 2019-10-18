@@ -28,8 +28,11 @@ class Encoder(tf.keras.Model):
         embeddings_initializer: embeddings 矩阵的初始化方法 (详见 initializers)。   https://keras.io/zh/initializers/
         embeddings_regularizer: embeddings matrix 的正则化方法 (详见 regularizer)。
         embeddings_constraint: embeddings matrix 的约束函数 (详见 constraints)。
-        mask_zero: 是否把 0 看作为一个应该被遮蔽的特殊的 "padding" 值。 这对于可变长的 循环神经网络层 十分有用。 如果设定为 True，那么接下来的所有层都必须支持 masking，否则就会抛出异常。 如果 mask_zero 为 True，作为结果，索引 0 就不能被用于词汇表中 （input_dim 应该与 vocabulary + 1 大小相同）。
-        input_length: 输入序列的长度，当它是固定的时。 如果你需要连接 Flatten 和 Dense 层，则这个参数是必须的 （没有它，dense 层的输出尺寸就无法计算）。
+        mask_zero: 是否把 0 看作为一个应该被遮蔽的特殊的 "padding" 值。 这对于可变长的 循环神经网络层 十分有用。 
+        如果设定为 True，那么接下来的所有层都必须支持 masking，否则就会抛出异常。 如果 mask_zero 为 True，作为结果
+        ，索引 0 就不能被用于词汇表中 （input_dim 应该与 vocabulary + 1 大小相同）。
+        input_length: 输入序列的长度，当它是固定的时。 如果你需要连接 Flatten 和 Dense 层，则这个参数是必须的 
+        （没有它，dense 层的输出尺寸就无法计算）。
         '''
 
         self.gru = tf.keras.layers.GRU(gru_size,
@@ -37,7 +40,8 @@ class Encoder(tf.keras.Model):
                                        return_state=True,
                                        recurrent_initializer='glorot_uniform')
         '''
-        return_sequences：默认 False。在输出序列中，返回单个 hidden state值还是返回全部time step 的 hidden state值。 False 返回单个， true 返回全部。
+        return_sequences：默认 False。在输出序列中，返回单个 hidden state值还是返回全部time step 的 hidden state值。
+         False 返回单个， true 返回全部。
         return_state：默认 False。是否返回除输出之外的最后一个状态。
         
         lstm1, state_h, state_c = LSTM(1, return_sequences=True, return_state=True)
@@ -50,10 +54,17 @@ class Encoder(tf.keras.Model):
 
 
         '''
-        keras.layers.GRU(units, activation='tanh', recurrent_activation='hard_sigmoid', use_bias=True, kernel_initializer='glorot_uniform', recurrent_initializer='orthogonal', bias_initializer='zeros', kernel_regularizer=None, recurrent_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, recurrent_constraint=None, bias_constraint=None, dropout=0.0, recurrent_dropout=0.0, implementation=1, return_sequences=False, return_state=False, go_backwards=False, stateful=False, unroll=False, reset_after=False)
+        keras.layers.GRU(units, activation='tanh', recurrent_activation='hard_sigmoid', use_bias=True, 
+        kernel_initializer='glorot_uniform', recurrent_initializer='orthogonal', bias_initializer='zeros', 
+        kernel_regularizer=None, recurrent_regularizer=None, bias_regularizer=None, activity_regularizer=None, 
+        kernel_constraint=None, recurrent_constraint=None, bias_constraint=None, dropout=0.0, recurrent_dropout=0.0, 
+        implementation=1, return_sequences=False, return_state=False, go_backwards=False, stateful=False, unroll=False, 
+        reset_after=False)
         units: 正整数，输出空间的维度。
-        activation: 要使用的激活函数 (详见 activations)。 默认：双曲正切 (tanh)。 如果传入 None，则不使用激活函数 (即 线性激活：a(x) = x)。
-        recurrent_activation: 用于循环时间步的激活函数 (详见 activations)。 默认：分段线性近似 sigmoid (hard_sigmoid)。 如果传入 None，则不使用激活函数 (即 线性激活：a(x) = x)。
+        activation: 要使用的激活函数 (详见 activations)。 默认：双曲正切 (tanh)。 如果传入 None，
+        则不使用激活函数 (即 线性激活：a(x) = x)。
+        recurrent_activation: 用于循环时间步的激活函数 (详见 activations)。 
+        默认：分段线性近似 sigmoid (hard_sigmoid)。 如果传入 None，则不使用激活函数 (即 线性激活：a(x) = x)。
         use_bias: 布尔值，该层是否使用偏置向量。
         kernel_initializer: kernel 权值矩阵的初始化器， 用于输入的线性转换 (详见 initializers)。
         recurrent_initializer: recurrent_kernel 权值矩阵 的初始化器，用于循环层状态的线性转换 (详见 initializers)。
@@ -67,12 +78,15 @@ class Encoder(tf.keras.Model):
         bias_constraint: 运用到偏置向量的约束函数 (详见 constraints)。
         dropout: 在 0 和 1 之间的浮点数。 单元的丢弃比例，用于输入的线性转换。
         recurrent_dropout: 在 0 和 1 之间的浮点数。 单元的丢弃比例，用于循环层状态的线性转换。
-        implementation: 实现模式，1 或 2。 模式 1 将把它的操作结构化为更多的小的点积和加法操作， 而模式 2 将把它们分批到更少，更大的操作中。 这些模式在不同的硬件和不同的应用中具有不同的性能配置文件。
+        implementation: 实现模式，1 或 2。 模式 1 将把它的操作结构化为更多的小的点积和加法操作， 
+        而模式 2 将把它们分批到更少，更大的操作中。 这些模式在不同的硬件和不同的应用中具有不同的性能配置文件。
         return_sequences: 布尔值。是返回输出序列中的最后一个输出，还是全部序列。
         return_state: 布尔值。除了输出之外是否返回最后一个状态。
         go_backwards: 布尔值 (默认 False)。 如果为 True，则向后处理输入序列并返回相反的序列。
-        stateful: 布尔值 (默认 False)。 如果为 True，则批次中索引 i 处的每个样品的最后状态 将用作下一批次中索引 i 样品的初始状态。
-        unroll: 布尔值 (默认 False)。 如果为 True，则网络将展开，否则将使用符号循环。 展开可以加速 RNN，但它往往会占用更多的内存。 展开只适用于短序列。
+        stateful: 布尔值 (默认 False)。 如果为 True，
+        则批次中索引 i 处的每个样品的最后状态 将用作下一批次中索引 i 样品的初始状态。
+        unroll: 布尔值 (默认 False)。 如果为 True，则网络将展开，否则将使用符号循环。 展开可以加速 RNN，
+        但它往往会占用更多的内存。 展开只适用于短序列。
         reset_after:
         GRU 公约 (是否在矩阵乘法之前或者之后使用重置门)。 False =「之前」(默认)，Ture =「之后」( CuDNN 兼容)。
         '''
@@ -108,17 +122,17 @@ class BahdanauAttention(tf.keras.Model):
 
         # score_shape == (batch_size, max_length, 1)
         # we get 1 at the last axis because we are applying score to self.V
-        # the shape of the tensor before applying self.V is (batch_size, max_length, gru_size) # units是gru_size,也就是hidden_size
+        # the shape of the tensor before applying self.V is (batch_size, max_length, gru_size)
         score = self.V(tf.nn.tanh(self.W1(values) + self.W2(hidden_with_time_axis)))
 
         # attention_weights shape == (batch_size, max_length, 1)
-        alignment = tf.nn.softmax(score, axis=1)
+        attention_weight = tf.nn.softmax(score, axis=1)
 
-        context_vector = alignment * values
+        context_vector = attention_weight * values
         context_vector = tf.reduce_sum(context_vector, axis=1)
         # context_vector shape after sum == (batch_size, hidden_size)
 
-        return context_vector, alignment
+        return context_vector, attention_weight
 
 class Decoder(tf.keras.Model):
     def __init__(self,vocab_size,
@@ -129,26 +143,45 @@ class Decoder(tf.keras.Model):
         self.gru_size = gru_size
         weights = [matrix]
         self.embedding = tf.keras.layers.Embedding(vocab_size, vec_dim,
-                                                   embeddings_initializer=tf.keras.initializers.Constant(
-                                                       weights),
+                                                   # embeddings_initializer=tf.keras.initializers.Constant(
+                                                   #     weights),
+                                                   weights=weights,
                                                    trainable=False)
         self.attention = BahdanauAttention(self.gru_size)
         self.gru = tf.keras.layers.GRU(self.gru_size,
                                        return_sequences=True,
-                                       return_state=True)
+                                       return_state=True,
+                                       recurrent_initializer='glorot_uniform')
         self.wc = tf.keras.layers.Dense(self.gru_size,activation='tanh')
         self.ws = tf.keras.layers.Dense(vocab_size)
 
     def call(self,sequence,state,encoder_output):
         embed = self.embedding(sequence)
-        gru_out,state_h,state_c = self.gru(embed,initial_state=state)
-        context,aligment = self.attention(gru_out,encoder_output)
+        gru_out, state_h = self.gru(embed, initial_state=state)
+        context_vector, attention_weight = self.attention(gru_out,encoder_output)
 
-        gru_out = tf.concat([tf.squeeze(context, 1), tf.squeeze(gru_out, 1)],1)
+        gru_out = tf.concat([tf.squeeze(context_vector, 1), tf.squeeze(gru_out, 1)], 1)
+        # 删除所有大小是1的维度
+        # (batch_size, embedding_dim + hidden_size)
+
+        '''
+        tf.squeeze
+        't' is a tensor of shape [1, 2, 1, 3, 1, 1]
+        shape(squeeze(t)) ==> [2, 3]
+        Or, to remove specific size 1 dimensions:
+
+        't' is a tensor of shape [1, 2, 1, 3, 1, 1]
+        shape(squeeze(t, [2, 4])) ==> [1, 2, 3, 1]
+        '''
+
         gru_out = self.wc(gru_out)
-        logits = self.ws(gru_out)
+        # output shape == (batch_size, gru_size)
+        # attention_vector
 
-        return logits,state_h,state_c,aligment
+        logits = self.ws(gru_out)
+        # output shape == (batch_size, vocab)
+
+        return logits, state_h, attention_weight
 
     def init_states(self,batch_size):
         return (tf.zeros([batch_size,self.gru_size]),
@@ -196,7 +229,8 @@ class Auto_model:
 
 
     def get_batch(self):
-        dataset = tf.data.Dataset.from_tensor_slices((self.input_tensor, self.target_tensor)).shuffle(len(self.input_tensor))
+        dataset = tf.data.Dataset.from_tensor_slices((self.input_tensor, self.target_tensor)).\
+            shuffle(len(self.input_tensor))
         self.dataset = dataset.batch(len(self.target_tensor), drop_remainder=True)
         example_input_batch, example_target_batch = next(iter(self.dataset))
         return example_input_batch, example_target_batch
@@ -212,7 +246,8 @@ class Auto_model:
         attention_result, attention_weights = self.attention_layer(state_h, output)
         #decoder part
         self.decoder = Decoder(self.tokenizer_decoder,self.embedding_dim,self.decoder_embedding,self.unit)
-        logits, state_h, state_c, aligment  = self.decoder(tf.random.uniform((self.batch_size, 1)), sample_hidden, output)
+        logits, state_h, state_c, aligment  = self.decoder(tf.random.uniform((self.batch_size, 1)), sample_hidden,
+                                                           output)
 
 
     @tf.function
