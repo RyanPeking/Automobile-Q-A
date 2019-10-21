@@ -175,7 +175,7 @@ class Auto_model:
         example_input_batch, example_target_batch = self.get_batch()
         self.encoder = Encoder(self.vocab_inp_size,self.embedding_dim,self.encoder_embedding,self.unit)
         sample_hidden = self.encoder.init_states(self.batch_size)
-        output,state_h = self.encoder(example_input_batch, sample_hidden)
+        output, state_h = self.encoder(example_input_batch, sample_hidden)
 
         #attention part
         self.attention_layer = BahdanauAttention(2)
@@ -239,6 +239,18 @@ class Auto_model:
                                                 total_loss / self.steps_per_epoch))
             print('Time taken for 1 epoch {} sec\n'.format(time.time() - start))
 
+
+if __name__ == '__main__':
+    model = Auto_model(input_tensor,
+                 target_tensor,
+                 16,
+                 embedding_matrix1,
+                 embedding_matrix2,
+                 tokenizer1,
+                 tokenizer2,
+                 8)
+
+    model.run_op(1)
 
 
 
