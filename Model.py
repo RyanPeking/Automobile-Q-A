@@ -48,11 +48,9 @@ class BahdanauAttention(tf.keras.Model):
         self.V = tf.keras.layers.Dense(1)
 
     def call(self, query, values):
-        # query: state_h
-        # values：output
-        # hidden_shape == (batch_size, gru_size) query   units == hidden_size
-        # value == (batch_size, max_length, gru_size)    max_length == sequence_length
-        # hidden_with_time_axis_shape == (batch_size, 1, gru_size)
+        # query: decoder hidden (batch_size, decoder_max_length, hidden_size)
+        # values：encoder output (batch_size, encoder_max_length, hidden_size)
+
         # we are doing this to perform addition to calculate the score
         hidden_with_time_axis = tf.expand_dims(query, 1)
 
