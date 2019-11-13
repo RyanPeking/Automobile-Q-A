@@ -10,7 +10,7 @@ def load_w2v_model(filepath):
     return model
 
 def tokenize(sents, max_len):
-    tokenizer = tf.keras.preprocessing.text.Tokenizer(filters='', lower=False, num_words = max_features)
+    tokenizer = tf.keras.preprocessing.text.Tokenizer(filters='', lower=False, num_words=max_features)
     tokenizer.fit_on_texts(sents)  # 这样保证encoder和decoder使用的是同一个字典，按道理讲，decoder输出少，不应该维护那么长的字典
     word_index = tokenizer.word_index
     # print(word_index)

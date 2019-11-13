@@ -1,6 +1,6 @@
 import os
 import jieba
-import re
+
 
 if __name__ == '__main__':
     root_path = os.path.abspath('../')
