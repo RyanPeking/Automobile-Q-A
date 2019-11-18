@@ -86,7 +86,7 @@ def example_generator(filename, vocab, max_enc_len, max_dec_len, batch_size, mod
             "input": output,
             "report": report,
         }
-        if mode == "test":
+        if mode == "test" or mode == "eval":
             for _ in range(batch_size):
                 yield output
         else:
@@ -174,7 +174,7 @@ if __name__ == '__main__':
     parser.add_argument("--max_dec_len", default=50, help="Decoder input max sequence length", type=int)
     parser.add_argument("--max_size", default=50000, help="Vocabulary size", type=int)
     parser.add_argument("--batch_size", default=32, help="batch size", type=int)
-    parser.add_argument("--mode", default='train', help="batch size")
+    parser.add_argument("--mode", default='train', help="mode")
     args = parser.parse_args()
     hps = vars(args)
     # print(hps['max_size'])
