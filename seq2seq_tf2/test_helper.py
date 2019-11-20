@@ -10,8 +10,8 @@ def beam_decode(model, batch, vocab, params):
             Args:
                 sess : tf.Session object
                 batch : current batch, shape = [beam_size, 1, vocab_size( + max_oov_len if pointer_gen)] (for the beam search decoding, batch_size = beam_size)
-                enc_outputs : hiddens outputs computed by the encoder LSTM
-                dec_state : beam_size-many list of decoder previous state, LSTMStateTuple objects, shape = [beam_size, 2, hidden_size]
+                enc_outputs : hiddens outputs computed by the encoder GRU
+                dec_state : beam_size-many list of decoder previous state, GRUStateTuple objects, shape = [beam_size, 2, hidden_size]
                 dec_input : decoder_input, the previous decoded batch_size-many words, shape = [beam_size, embed_size]
                 cov_vec : beam_size-many list of previous coverage vector
             Returns: A dictionary of the results of all the ops computations (see below for more details)
@@ -95,8 +95,8 @@ def beam_decode(model, batch, vocab, params):
         # we decode the top likely 2 x beam_size tokens tokens at time step t for each hypothesis
         returns = decode_onestep(batch, enc_outputs, tf.stack(states, axis=0), tf.expand_dims(latest_tokens, axis=1))
         topk_ids, topk_log_probs, new_states, attn_dists, p_gens = returns['top_k_ids'], returns['top_k_log_probs'], \
-                                                                   returns['dec_state'], returns[
-                                                                       'attention_vec'], np.squeeze(returns["p_gen"])
+                                                                   returns['dec_state'], returns['attention_vec'], \
+                                                                   np.squeeze(returns["p_gen"])
         all_hyps = []
         num_orig_hyps = 1 if steps == 0 else len(hyps)
         for i in range(num_orig_hyps):
