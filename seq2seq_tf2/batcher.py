@@ -1,5 +1,5 @@
 import tensorflow as tf
-from data_process.data import input_to_ids, report_to_ids, Vocab
+from data_process.data import input_to_ids, report_to_ids
 import pandas as pd
 
 

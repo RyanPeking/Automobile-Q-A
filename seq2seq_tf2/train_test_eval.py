@@ -1,8 +1,9 @@
 import tensorflow as tf
-from seq2seq_tf2.model import PGN
-from seq2seq_tf2.train_helper import train_model
-from seq2seq_tf2.test_helper import beam_decode
-from seq2seq_tf2.batcher import batcher, Vocab
+from model import PGN
+from train_helper import train_model
+from test_helper import beam_decode
+from batcher import batcher
+from data_process.data import Vocab
 from tqdm import tqdm
 from rouge import Rouge
 import pprint

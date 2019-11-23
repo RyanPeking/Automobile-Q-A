@@ -1,6 +1,6 @@
 import tensorflow as tf
-from seq2seq_tf2.layers import Encoder, BahdanauAttention, Decoder, Pointer
-from seq2seq_tf2.embedding import get_embedding
+from layers import Encoder, BahdanauAttention, Decoder, Pointer
+from embedding import get_embedding
 import os
 
 

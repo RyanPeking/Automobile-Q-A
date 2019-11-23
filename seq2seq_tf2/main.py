@@ -1,5 +1,5 @@
 import argparse
-from seq2seq_tf2.train_test_eval import train, test_and_save, evaluate
+from train_test_eval import train, test_and_save, evaluate
 import os
 import warnings
 
