@@ -29,7 +29,7 @@ def main():
   parser.add_argument("--model_path", help="Path to a specific model", default=os.path.join(os.path.abspath('../'), 'data', 'model'), type=str)
   parser.add_argument("--checkpoint_dir", help="Checkpoint directory", default=os.path.join(os.path.abspath('../'), 'data', 'checkpoint_dir'), type=str)
   parser.add_argument("--test_save_dir", help="Directory in which we store the decoding results", default=os.path.join(os.path.abspath('../'), 'data', 'test_save_dir'), type=str)
-  parser.add_argument("--data_dir",  help="Data Folder", default=os.path.join(os.path.abspath('../'), 'data', 'eval.csv'), type=str)
+  parser.add_argument("--data_dir",  help="Data Folder", default=os.path.join(os.path.abspath('../'), 'data', 'train.csv'), type=str)
   parser.add_argument("--vocab_path", help="Vocab path", default=os.path.join(os.path.abspath('../'), 'data', 'words_frequences.txt'), type=str)
   parser.add_argument("--log_file", help="File in which to redirect console outputs", default=os.path.join(os.path.abspath('../'), 'data', 'log.txt'), type=str)
 

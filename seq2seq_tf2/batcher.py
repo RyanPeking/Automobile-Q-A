@@ -52,19 +52,20 @@ def example_generator(filename, vocab, max_enc_len, max_dec_len, batch_size, mod
 
     if mode == "train":
         buffer_size = len(data['input'])
-        parser_dataset = tf.data.Dataset.from_tensor_slices((data['input'], data['Report'])).shuffle(buffer_size)
+        # parser_dataset = tf.data.Dataset.from_tensor_slices((data['input'], data['Report'])).shuffle(buffer_size)
+        parser_dataset = tf.data.Dataset.from_tensor_slices((data['input'], data['Report'])).shuffle(1000, reshuffle_each_iteration=True).repeat()
 
     elif mode == "test" or mode == "eval":
         parser_dataset = tf.data.Dataset.from_tensor_slices(data['input'])
 
-    parser_dataset = parser_dataset.batch(batch_size=batch_size, drop_remainder=True)
+    # parser_dataset = parser_dataset.batch(batch_size=batch_size, drop_remainder=True)
 
     for raw_record in parser_dataset:
         start_decoding = vocab.word_to_id(vocab.START_DECODING)
         stop_decoding = vocab.word_to_id(vocab.STOP_DECODING)
         pad_decoding = vocab.word_to_id(vocab.PAD_TOKEN)
 
-        input = raw_record[0].numpy()[0].decode('UTF-8')
+        input = raw_record[0].numpy().decode('UTF-8')
         input_words = input.split()[:max_enc_len]
         enc_len = len(input_words)
         enc_input = [vocab.word_to_id(w) for w in input_words]
@@ -72,7 +73,7 @@ def example_generator(filename, vocab, max_enc_len, max_dec_len, batch_size, mod
         enc_input, enc_input_extend_vocab = pad_decoder_inp_targ(enc_input, enc_input_extend_vocab, max_enc_len, pad_decoding)
 
         if mode == "train" or mode == "eval":
-            report = raw_record[1].numpy()[0].decode('UTF-8')
+            report = raw_record[1].numpy().decode('UTF-8')
             report_words = report.split()
             report_ids = [vocab.word_to_id(w) for w in report_words]
             report_ids_extend_vocab = report_to_ids(report_words, vocab, input_oovs)
