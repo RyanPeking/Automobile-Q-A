@@ -3,6 +3,9 @@ from model import PGN
 from train_helper import train_model
 from test_helper import beam_decode
 from batcher import batcher
+import os
+import sys
+sys.path.append(os.path.join(os.path.abspath('../'), 'data_process'))
 from data_process.data import Vocab
 from tqdm import tqdm
 from rouge import Rouge
