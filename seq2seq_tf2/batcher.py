@@ -48,44 +48,56 @@ def example_generator(filename, vocab, max_enc_len, max_dec_len, batch_size, mod
     data = pd.read_csv(filename)
 
     if mode == "train":
-        train_dataset = tf.data.Dataset.zip((data['input'], data['Report']))
-    elif mode == "test":
-        train_dataset = tf.data.Dataset(data['input'])
-    train_dataset = train_dataset.shuffle(batch_size, reshuffle_each_iteration=True).repeat()
+        buffer_size = len(data['input'])
+        parser_dataset = tf.data.Dataset.from_tensor_slices((data['input'], data['Report'])).shuffle(buffer_size)
 
-    for raw_record in train_dataset:
-        input = raw_record[0]
-        report = raw_record[1]
+    elif mode == "test" or mode == "eval":
+        parser_dataset = tf.data.Dataset.from_tensor_slices(data['input'])
 
+    parser_dataset = parser_dataset.batch(batch_size=batch_size, drop_remainder=True)
+
+    for raw_record in parser_dataset:
         start_decoding = vocab.word_to_id(vocab.START_DECODING)
         stop_decoding = vocab.word_to_id(vocab.STOP_DECODING)
         pad_decoding = vocab.word_to_id(vocab.PAD_TOKEN)
 
+        input = raw_record[0].numpy()[0].decode('UTF-8')
         input_words = input.split()[:max_enc_len]
         enc_len = len(input_words)
         enc_input = [vocab.word_to_id(w) for w in input_words]
         enc_input_extend_vocab, input_oovs = input_to_ids(input_words, vocab)
         enc_input, enc_input_extend_vocab = pad_decoder_inp_targ(enc_input, enc_input_extend_vocab, max_enc_len, pad_decoding)
 
-        report_words = report.split()
-        report_ids = [vocab.word_to_id(w) for w in report_words]
-        report_ids_extend_vocab = report_to_ids(report_words, vocab, input_oovs)
-        dec_input, target = get_dec_inp_targ_seqs(report_ids, max_dec_len, start_decoding, stop_decoding)
-        _, target = get_dec_inp_targ_seqs(report_ids_extend_vocab, max_dec_len, start_decoding, stop_decoding)
-        dec_len = len(dec_input)
-        dec_input, target = pad_decoder_inp_targ(dec_input, target, max_dec_len, pad_decoding)
+        if mode == "train" or mode == "eval":
+            report = raw_record[1].numpy()[0].decode('UTF-8')
+            report_words = report.split()
+            report_ids = [vocab.word_to_id(w) for w in report_words]
+            report_ids_extend_vocab = report_to_ids(report_words, vocab, input_oovs)
+            dec_input, target = get_dec_inp_targ_seqs(report_ids, max_dec_len, start_decoding, stop_decoding)
+            _, target = get_dec_inp_targ_seqs(report_ids_extend_vocab, max_dec_len, start_decoding, stop_decoding)
+            dec_len = len(dec_input)
+            dec_input, target = pad_decoder_inp_targ(dec_input, target, max_dec_len, pad_decoding)
 
-        output = {
-            "enc_len": enc_len,
-            "enc_input": enc_input,
-            "enc_input_extend_vocab": enc_input_extend_vocab,
-            "input_oovs": input_oovs,
-            "dec_input": dec_input,
-            "target": target,
-            "dec_len": dec_len,
-            "input": output,
-            "report": report,
-        }
+            output = {
+                "enc_len": enc_len,
+                "enc_input": enc_input,
+                "enc_input_extend_vocab": enc_input_extend_vocab,
+                "input_oovs": input_oovs,
+                "dec_input": dec_input,
+                "target": target,
+                "dec_len": dec_len,
+                "input": input,
+                "report": report,
+            }
+        elif mode == "test":
+            output = {
+                "enc_len": enc_len,
+                "enc_input": enc_input,
+                "enc_input_extend_vocab": enc_input_extend_vocab,
+                "input_oovs": input_oovs,
+                "input": input,
+            }
+
         if mode == "test" or mode == "eval":
             for _ in range(batch_size):
                 yield output
@@ -156,9 +168,8 @@ def batch_generator(generator, filename, vocab, max_enc_len, max_dec_len, batch_
     return dataset
 
 
-def batcher(filename, vocab_path, hps):
+def batcher(filename, vocab, hps):
     # hps: hyperparameters
-    vocab = Vocab(vocab_path, hps['max_size'])
     dataset = batch_generator(example_generator, filename, vocab, hps["max_enc_len"],
                               hps["max_dec_len"], hps["batch_size"], hps["mode"])
     return dataset
@@ -167,15 +178,16 @@ def batcher(filename, vocab_path, hps):
 if __name__ == '__main__':
     import os
     import argparse
-    train_path = os.path.join(os.path.abspath('../'), 'data', 'train.csv')
+    train_path = os.path.join(os.path.abspath('../'), 'data', 'treated_train.csv')
     vocab_path = os.path.join(os.path.abspath('../'), 'data', 'words_frequences.txt')
     parser = argparse.ArgumentParser()
     parser.add_argument("--max_enc_len", default=500, help="Encoder input max sequence length", type=int)
     parser.add_argument("--max_dec_len", default=50, help="Decoder input max sequence length", type=int)
-    parser.add_argument("--max_size", default=50000, help="Vocabulary size", type=int)
+    parser.add_argument("--vocab_size", default=50000, help="Vocabulary size", type=int)
     parser.add_argument("--batch_size", default=32, help="batch size", type=int)
     parser.add_argument("--mode", default='train', help="mode")
     args = parser.parse_args()
     hps = vars(args)
     # print(hps['max_size'])
     b = batcher(train_path, vocab_path, hps)
+    print(b)

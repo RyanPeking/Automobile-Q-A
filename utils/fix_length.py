@@ -40,8 +40,8 @@ def get_required_len(data, targ_percent):
 
 if __name__ == '__main__':
     root_path = os.path.abspath('../')
-    test_path = os.path.join(root_path, 'data\\test.csv')
-    train_path = os.path.join(root_path, 'data\\train.csv')
+    test_path = os.path.join(root_path, 'data', 'test.csv')
+    train_path = os.path.join(root_path, 'data', 'treated_train.csv')
 
     test = pd.read_csv(test_path)
     train = pd.read_csv(train_path)

@@ -33,6 +33,6 @@ def build_vocab(words):
 
 if __name__ == '__main__':
     root_path = os.path.abspath('../')
-    words = read_data(os.path.join(root_path, 'data', 'train.csv'), os.path.join(root_path, 'data', 'test.csv'))
+    words = read_data(os.path.join(root_path, 'data', 'treated_train.csv'), os.path.join(root_path, 'data', 'test.csv'))
     words_frequence = build_vocab(words)
     save_word_dict(words_frequence, os.path.join(root_path, 'data', 'words_frequences.txt'))

@@ -25,8 +25,6 @@ def train_model(model, dataset, params, ckpt, ckpt_manager, out_file):
                                   tf.TensorSpec(shape=[params["batch_size"], params["max_dec_len"]], dtype=tf.int32),
                                   tf.TensorSpec(shape=[], dtype=tf.int32)))
     def train_step(enc_inp, enc_extended_inp, dec_inp, dec_tar, batch_oov_len):
-        loss = 0
-
         with tf.GradientTape() as tape:
             enc_hidden, enc_output = model.call_encoder(enc_inp)
             predictions, _ = model(enc_output, enc_hidden, enc_inp, enc_extended_inp, dec_inp, batch_oov_len)

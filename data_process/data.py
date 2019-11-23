@@ -17,6 +17,7 @@ class Vocab:
         self.id2word = {0: Vocab.UNKNOWN_TOKEN, 1: Vocab.PAD_TOKEN, 2: Vocab.START_DECODING, 3: Vocab.STOP_DECODING}
         self.count = 4
 
+
         with open(vocab_file, 'r', encoding='utf-8') as f:
             for line in f:
                 pieces = line.split()

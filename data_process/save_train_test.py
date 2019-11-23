@@ -61,7 +61,7 @@ if __name__ == '__main__':
     data_path1 = os.path.join(root_path, 'data', 'AutoMaster_TrainSet.csv')
     data_path2 = os.path.join(root_path, 'data', 'AutoMaster_TestSet.csv')
 
-    train_save_path = os.path.join(root_path, 'data', 'train.csv')
+    train_save_path = os.path.join(root_path, 'data', 'treated_train.csv')
     test_save_path = os.path.join(root_path, 'data', 'test.csv')
 
     split_data(data_path1, data_path2, train_save_path, test_save_path)

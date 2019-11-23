@@ -4,13 +4,13 @@ import numpy as np
 
 
 def get_embedding(vocab_path, word_model_path, hps):
-    vocab = Vocab(vocab_path, hps['max_size'])
+    vocab = Vocab(vocab_path, hps['vocab_size'])
     embed_size = hps['embed_size']
     model = Word2Vec.load(word_model_path)
 
     # encoder embedding
-    embedding_matrix = np.zeros((hps['max_size'], embed_size))
-    for i in range(hps['max_size']):
+    embedding_matrix = np.zeros((hps['vocab_size'], embed_size))
+    for i in range(hps['vocab_size']):
         word = vocab.id2word[i]
         if word not in model.wv.vocab:
             embedding_vector = np.random.uniform(-0.025, 0.025, (embed_size))
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--max_enc_len", default=500, help="Encoder input max sequence length", type=int)
     parser.add_argument("--max_dec_len", default=50, help="Decoder input max sequence length", type=int)
-    parser.add_argument("--max_size", default=50000, help="Vocabulary size", type=int)
+    parser.add_argument("--vocab_size", default=50000, help="Vocabulary size", type=int)
     parser.add_argument("--batch_size", default=32, help="batch size", type=int)
     parser.add_argument("--mode", default='train', help="mode")
     parser.add_argument("--embed_size", default=100, help="embed_size", type=int)

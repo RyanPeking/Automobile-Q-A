@@ -1,13 +1,18 @@
 import tensorflow as tf
 from seq2seq_tf2.layers import Encoder, BahdanauAttention, Decoder, Pointer
+from seq2seq_tf2.embedding import get_embedding
+import os
 
 
 class PGN(tf.keras.Model):
 
     def __init__(self, params):
         super(PGN, self).__init__()
+        word_model_path = os.path.join(os.path.abspath('../'), 'data', 'w2v.model')
+        vocab_path = os.path.join(os.path.abspath('../'), 'data', 'words_frequences.txt')
         self.params = params
-        self.encoder = Encoder(params["vocab_size"], params["embed_size"], params["enc_units"], params["batch_size"])
+        self.matrix = get_embedding(vocab_path, word_model_path, params)
+        self.encoder = Encoder(params["vocab_size"], params["embed_size"], self.matrix, params["enc_units"], params["batch_size"])
         self.attention = BahdanauAttention(params["attn_units"])
         self.decoder = Decoder(params["vocab_size"], params["embed_size"], params["dec_units"], params["batch_size"])
         self.pointer = Pointer()

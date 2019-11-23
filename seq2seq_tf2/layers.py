@@ -8,10 +8,19 @@ class Encoder(tf.keras.layers.Layer):
         self.enc_units = enc_units
         weights = [matrix]
         self.embedding = tf.keras.layers.Embedding(vocab_size, embedding_dim, weights=weights, trainable=False)
-        self.gru = tf.keras.layers.GRU(self.enc_units,
-                                       return_sequences=True,
-                                       return_state=True,
-                                       recurrent_initializer='glorot_uniform')
+        device_name = tf.test.gpu_device_name()
+        if device_name != '/device:GPU:0':
+            self.gru = tf.keras.layers.GRU(self.enc_units,
+                                           return_sequences=True,
+                                           return_state=True,
+                                           recurrent_initializer='glorot_uniform')
+        else:
+            print('GPU accelerated...')
+            with tf.device('/device:GPU:0'):
+                self.gru = tf.keras.layers.CuDNNGRU(self.enc_units,
+                                               return_sequences=True,
+                                               return_state=True,
+                                               recurrent_initializer='glorot_uniform')
 
     def call(self, x, hidden):
         x = self.embedding(x)
