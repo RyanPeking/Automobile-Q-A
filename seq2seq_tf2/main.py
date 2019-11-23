@@ -1,6 +1,9 @@
 import argparse
 from seq2seq_tf2.train_test_eval import train, test_and_save, evaluate
 import os
+import warnings
+
+warnings.filterwarnings('ignore')
 
 def main():
   parser = argparse.ArgumentParser()
