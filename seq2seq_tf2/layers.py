@@ -28,8 +28,8 @@ class Encoder(tf.keras.layers.Layer):
             except RuntimeError as e:
                 print(e)
 
-            # with tf.device('/device:GPU:0'):
-            self.gru = tf.keras.layers.CuDNNGRU(self.enc_units,
+            with tf.device('/device:GPU:0'):
+                self.gru = tf.keras.layers.GRU(self.enc_units,
                                            return_sequences=True,
                                            return_state=True,
                                            recurrent_initializer='glorot_uniform')
