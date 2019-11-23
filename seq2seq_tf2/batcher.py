@@ -2,8 +2,7 @@ import tensorflow as tf
 import os
 import sys
 sys.path.append(os.path.join(os.path.abspath('../'), 'data_process'))
-
-from data_process.data import input_to_ids, report_to_ids
+from data import input_to_ids, report_to_ids
 import pandas as pd
 
 

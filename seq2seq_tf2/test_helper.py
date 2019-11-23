@@ -3,7 +3,7 @@ import numpy as np
 import os
 import sys
 sys.path.append(os.path.join(os.path.abspath('../'), 'data_process'))
-from data_process.data import output_to_words
+from data import output_to_words
 
 
 def beam_decode(model, batch, vocab, params):

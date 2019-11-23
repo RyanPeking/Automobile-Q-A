@@ -2,7 +2,7 @@ from gensim.models import Word2Vec
 import os
 import sys
 sys.path.append(os.path.join(os.path.abspath('../'), 'data_process'))
-from data_process.data import Vocab
+from data import Vocab
 import numpy as np
 
 
