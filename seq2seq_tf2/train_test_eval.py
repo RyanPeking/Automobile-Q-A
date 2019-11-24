@@ -81,7 +81,7 @@ def evaluate(params):
 	gen = test(params)
 	reals = []
 	preds = []
-	with tqdm(total=params["max_num_to_eval"],position=0, leave=True) as pbar:
+	with tqdm(total=params["max_num_to_eval"], position=0, leave=True) as pbar:
 		for i in range(params["max_num_to_eval"]):
 			trial = next(gen)
 			reals.append(trial.real_report)

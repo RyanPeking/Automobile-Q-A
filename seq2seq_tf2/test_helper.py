@@ -132,11 +132,15 @@ def beam_decode(model, batch, vocab, params):
         results = hyps
 
     # At the end of the loop we return the most likely hypothesis, which holds the most likely ouput sequence, given the input fed to the model
+    # print(results)
     hyps_sorted = sorted(results, key=lambda h: h.avg_log_prob, reverse=True)
     best_hyp = hyps_sorted[0]
-    best_hyp.abstract = " ".join(output_to_words(best_hyp.tokens, vocab, batch[0]["article_oovs"][0])[1:-1])
+    best_hyp.report = " ".join(output_to_words(best_hyp.tokens, vocab, batch[0]["input_oovs"][0])[1:-1])
     best_hyp.text = batch[0]["input"].numpy()[0].decode()
     if params["mode"] == "eval":
         best_hyp.real_report = batch[1]["report"].numpy()[0].decode()
+    print('input: '+ best_hyp.text)
+    print('predict_report: ' + best_hyp.report)
+    print('real_report: ' + best_hyp.real_report)
     return best_hyp
 

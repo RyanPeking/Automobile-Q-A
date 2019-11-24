@@ -53,9 +53,11 @@ def example_generator(filename, vocab, max_enc_len, max_dec_len, batch_size, mod
     if mode == "train":
         buffer_size = len(data['input'])
         # parser_dataset = tf.data.Dataset.from_tensor_slices((data['input'], data['Report'])).shuffle(buffer_size)
-        parser_dataset = tf.data.Dataset.from_tensor_slices((data['input'], data['Report'])).shuffle(1000, reshuffle_each_iteration=True).repeat()
+        parser_dataset = tf.data.Dataset.from_tensor_slices((data['input'], data['Report'])).shuffle(buffer_size, reshuffle_each_iteration=True).repeat()
 
-    elif mode == "test" or mode == "eval":
+    elif mode == 'eval':
+        parser_dataset = tf.data.Dataset.from_tensor_slices((data['input'], data['Report']))
+    elif mode == "test":
         parser_dataset = tf.data.Dataset.from_tensor_slices(data['input'])
 
     # parser_dataset = parser_dataset.batch(batch_size=batch_size, drop_remainder=True)
@@ -65,7 +67,10 @@ def example_generator(filename, vocab, max_enc_len, max_dec_len, batch_size, mod
         stop_decoding = vocab.word_to_id(vocab.STOP_DECODING)
         pad_decoding = vocab.word_to_id(vocab.PAD_TOKEN)
 
-        input = raw_record[0].numpy().decode('UTF-8')
+        if mode == "train" or mode == "eval":
+            input = raw_record[0].numpy().decode('UTF-8')
+        elif mode == "test":
+            input = raw_record.numpy().decode('UTF-8')
         input_words = input.split()[:max_enc_len]
         enc_len = len(input_words)
         enc_input = [vocab.word_to_id(w) for w in input_words]
@@ -192,6 +197,5 @@ if __name__ == '__main__':
     parser.add_argument("--mode", default='train', help="mode")
     args = parser.parse_args()
     hps = vars(args)
-    # print(hps['max_size'])
     b = batcher(train_path, vocab_path, hps)
     print(b)
