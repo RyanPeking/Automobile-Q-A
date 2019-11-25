@@ -23,7 +23,6 @@ class PGN(tf.keras.Model):
         return enc_hidden, enc_output
 
     def call(self, enc_output, dec_hidden, enc_inp, enc_extended_inp, dec_inp, batch_oov_len):
-
         predictions = []
         attentions = []
         p_gens = []
@@ -40,8 +39,8 @@ class PGN(tf.keras.Model):
         final_dists = _calc_final_dist(enc_extended_inp, predictions, attentions, p_gens, batch_oov_len,
                                        self.params["vocab_size"], self.params["batch_size"])
         if self.params["mode"] == "train":
-            return tf.stack(final_dists,
-                            1), dec_hidden  # predictions_shape = (batch_size, dec_len, vocab_size) with dec_len = 1 in pred mode
+            return tf.stack(final_dists, 1), dec_hidden
+            # predictions_shape = (batch_size, dec_len, vocab_size) with dec_len = 1 in pred mode
         else:
             return tf.stack(final_dists, 1), dec_hidden, context_vector, tf.stack(attentions, 1), tf.stack(p_gens, 1)
 
@@ -55,8 +54,8 @@ def _calc_final_dist( _enc_batch_extend_vocab, vocab_dists, attn_dists, p_gens, 
   final_dists: The final distributions. List length max_dec_steps of (batch_size, extended_vsize) arrays.
   """
   # Multiply vocab dists by p_gen and attention dists by (1-p_gen)
-  vocab_dists = [p_gen * dist for (p_gen,dist) in zip(p_gens, vocab_dists)]
-  attn_dists = [(1-p_gen) * dist for (p_gen,dist) in zip(p_gens, attn_dists)]
+  vocab_dists = [p_gen * dist for (p_gen, dist) in zip(p_gens, vocab_dists)]
+  attn_dists = [(1-p_gen) * dist for (p_gen, dist) in zip(p_gens, attn_dists)]
 
   # Concatenate some zeros to each vocabulary dist, to hold the probabilities for in-article OOV words
   extended_vsize = vocab_size + batch_oov_len # the maximum (over the batch) size of the extended vocabulary
@@ -71,13 +70,13 @@ def _calc_final_dist( _enc_batch_extend_vocab, vocab_dists, attn_dists, p_gens, 
   batch_nums = tf.expand_dims(batch_nums, 1) # shape (batch_size, 1)
   attn_len = tf.shape(_enc_batch_extend_vocab)[1] # number of states we attend over
   batch_nums = tf.tile(batch_nums, [1, attn_len]) # shape (batch_size, attn_len)
-  indices = tf.stack( (batch_nums, _enc_batch_extend_vocab), axis=2) # shape (batch_size, enc_t, 2)
+  indices = tf.stack((batch_nums, _enc_batch_extend_vocab), axis=2) # shape (batch_size, enc_t, 2)
   shape = [batch_size, extended_vsize]
   attn_dists_projected = [tf.scatter_nd(indices, copy_dist, shape) for copy_dist in attn_dists] # list length max_dec_steps (batch_size, extended_vsize)
 
   # Add the vocab distributions and the copy distributions together to get the final distributions
   # final_dists is a list length max_dec_steps; each entry is a tensor shape (batch_size, extended_vsize) giving the final distribution for that decoder timestep
   # Note that for decoder timesteps and examples corresponding to a [PAD] token, this is junk - ignore.
-  final_dists = [vocab_dist + copy_dist for (vocab_dist,copy_dist) in zip(vocab_dists_extended, attn_dists_projected)]
+  final_dists = [vocab_dist + copy_dist for (vocab_dist, copy_dist) in zip(vocab_dists_extended, attn_dists_projected)]
 
   return final_dists

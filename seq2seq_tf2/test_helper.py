@@ -139,7 +139,7 @@ def beam_decode(model, batch, vocab, params):
     best_hyp.text = batch[0]["input"].numpy()[0].decode()
     if params["mode"] == "eval":
         best_hyp.real_report = batch[1]["report"].numpy()[0].decode()
-    print('input: '+ best_hyp.text)
+    print('input: ' + best_hyp.text)
     print('predict_report: ' + best_hyp.report)
     print('real_report: ' + best_hyp.real_report)
     return best_hyp

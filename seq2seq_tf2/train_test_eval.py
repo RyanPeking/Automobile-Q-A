@@ -60,7 +60,11 @@ def test(params):
 	ckpt.restore(path)
 	print("Model restored")
 
+	# print('--------------------b-----------------------')
+	# print(b)
 	for batch in b:
+		# print('---------------------batch--------------------')
+		# print(batch)
 		yield beam_decode(model, batch, vocab, params)
 
 

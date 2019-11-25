@@ -51,9 +51,8 @@ def example_generator(filename, vocab, max_enc_len, max_dec_len, batch_size, mod
     data = pd.read_csv(filename)
 
     if mode == "train":
-        buffer_size = len(data['input'])
         # parser_dataset = tf.data.Dataset.from_tensor_slices((data['input'], data['Report'])).shuffle(buffer_size)
-        parser_dataset = tf.data.Dataset.from_tensor_slices((data['input'], data['Report'])).shuffle(buffer_size, reshuffle_each_iteration=True).repeat()
+        parser_dataset = tf.data.Dataset.from_tensor_slices((data['input'], data['Report'])).shuffle(1000, reshuffle_each_iteration=True).repeat()
 
     elif mode == 'eval':
         parser_dataset = tf.data.Dataset.from_tensor_slices((data['input'], data['Report']))
@@ -187,14 +186,14 @@ def batcher(filename, vocab, hps):
 if __name__ == '__main__':
     import os
     import argparse
-    train_path = os.path.join(os.path.abspath('../'), 'data', 'treated_train.csv')
+    train_path = os.path.join(os.path.abspath('../'), 'data', 'eval.csv')
     vocab_path = os.path.join(os.path.abspath('../'), 'data', 'words_frequences.txt')
     parser = argparse.ArgumentParser()
     parser.add_argument("--max_enc_len", default=500, help="Encoder input max sequence length", type=int)
     parser.add_argument("--max_dec_len", default=50, help="Decoder input max sequence length", type=int)
     parser.add_argument("--vocab_size", default=50000, help="Vocabulary size", type=int)
     parser.add_argument("--batch_size", default=32, help="batch size", type=int)
-    parser.add_argument("--mode", default='train', help="mode")
+    parser.add_argument("--mode", default='eval', help="mode")
     args = parser.parse_args()
     hps = vars(args)
     b = batcher(train_path, vocab_path, hps)
