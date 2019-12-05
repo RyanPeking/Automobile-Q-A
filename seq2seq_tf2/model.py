@@ -14,7 +14,7 @@ class PGN(tf.keras.Model):
         self.matrix = get_embedding(vocab_path, word_model_path, params)
         self.encoder = Encoder(params["vocab_size"], params["embed_size"], self.matrix, params["enc_units"], params["batch_size"])
         self.attention = BahdanauAttention(params["attn_units"])
-        self.decoder = Decoder(params["vocab_size"], params["embed_size"], params["dec_units"], params["batch_size"])
+        self.decoder = Decoder(params["vocab_size"], params["embed_size"], self.matrix, params["dec_units"], params["batch_size"])
         self.pointer = Pointer()
 
     def call_encoder(self, enc_inp):
